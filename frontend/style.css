@@ -1,0 +1,29 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background: #e6ffe6;
+  text-align: center;
+  padding: 30px;
+}
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: auto;
+}
+button {
+  font-size: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+#response-box {
+  margin-top: 20px;
+  background-color: #f0fff0;
+  padding: 15px;
+  border-radius: 10px;
+}
