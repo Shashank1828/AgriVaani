@@ -286,6 +286,8 @@ body {
     right: 10px;
   }
 }
+
+
 /* ------------------------------
    User Info Modal Styling
 ------------------------------ */
@@ -349,104 +351,189 @@ body {
 
 
 /* ------------------------------
-   Animations for Beautiful UI
+   Animations and Effects
 ------------------------------ */
 
-/* Fade + Scale in for modals */
-@keyframes fadeScale {
+/* Slide in animation for containers */
+@keyframes fadeInUp {
   0% {
+    transform: translateY(40px);
     opacity: 0;
-    transform: scale(0.9);
   }
   100% {
+    transform: translateY(0);
     opacity: 1;
-    transform: scale(1);
   }
 }
 
-/* Pulse Animation for Mic */
-@keyframes pulse {
+.container,
+.auth-box,
+#user-info-modal .auth-box {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Glow hover effect for user icon */
+.user-icon:hover {
+  box-shadow: 0 0 15px #48bb78, 0 0 25px #38a169;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+/* Pulse animation for mic button */
+@keyframes pulseMic {
   0% {
-    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.5);
   }
   70% {
-    box-shadow: 0 0 0 20px rgba(72, 187, 120, 0);
+    box-shadow: 0 0 0 15px rgba(72, 187, 120, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
   }
 }
 
-.mic-btn.pulse {
-  animation: pulse 2s infinite;
+.mic-btn {
+  animation: pulseMic 2s infinite;
 }
 
-/* Entry animation for modals and boxes */
-.auth-box, #user-info-modal .auth-box, .container, .response-box {
-  animation: fadeScale 0.5s ease forwards;
+/* Smooth fade-in for modal overlays */
+.auth-modal {
+  animation: fadeIn 0.3s ease;
 }
 
-/* Loader Pulse Effect */
-@keyframes loaderPulse {
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Button glow on hover */
+.auth-form button:hover,
+#logout-btn:hover {
+  box-shadow: 0 0 10px rgba(56, 161, 105, 0.6);
+}
+
+/* Elevation hover on .container */
+.container:hover {
+  transform: translateY(-5px);
+  transition: transform 0.4s ease;
+}
+
+
+.header h1 {
+  background: linear-gradient(90deg, #2f855a, #48bb78, #68d391);
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textFlow 5s ease infinite;
+}
+
+@keyframes textFlow {
+  0% { background-position: 0%; }
+  50% { background-position: 100%; }
+  100% { background-position: 0%; }
+}
+
+
+@keyframes scaleFade {
   0% {
-    transform: scale(1);
-    border-top-color: #48bb78;
-  }
-  50% {
-    transform: scale(1.2);
-    border-top-color: #38a169;
+    transform: scale(0.9);
+    opacity: 0;
   }
   100% {
     transform: scale(1);
-    border-top-color: #48bb78;
+    opacity: 1;
   }
 }
 
-.loader {
-  animation: loaderPulse 1.2s ease-in-out infinite;
+.auth-box,
+.response-box,
+#user-info-modal .auth-box {
+  animation: scaleFade 0.6s ease forwards;
 }
 
-/* Glow + Lift on Hover for Main Buttons */
+
+
+.container,
+.auth-box,
+.response-box,
+#user-info-modal .auth-box {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  animation: glassFade 0.3s ease-out;
+}
+
+@keyframes glassFade {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
 .auth-form button,
-#user-info-modal #logout-btn {
-  box-shadow: 0 4px 10px rgba(56, 161, 105, 0.3);
+#logout-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #38a169, #2f855a);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 .auth-form button:hover,
-#user-info-modal #logout-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(56, 161, 105, 0.5);
+#logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(72, 187, 120, 0.4);
 }
 
-/* Response box shimmer (background moving pattern) */
-.response-box {
-  position: relative;
-  overflow: hidden;
-}
-
-.response-box::before {
+.auth-form button::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
+  top: -50%;
+  left: -25%;
+  width: 150%;
+  height: 200%;
   background: linear-gradient(
     120deg,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0.5) 50%,
-    rgba(255, 255, 255, 0.2) 100%
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.3) 40%,
+    rgba(255, 255, 255, 0.1) 70%
   );
-  animation: shimmer 2s infinite;
+  transform: rotate(25deg);
+  transition: left 0.8s ease;
+  pointer-events: none;
 }
 
-@keyframes shimmer {
-  0% {
-    left: -75%;
-  }
-  100% {
-    left: 125%;
+.auth-form button:hover::before {
+  left: 100%;
+}
+
+
+body {
+  opacity: 0;
+  animation: bodyFade 1s ease forwards;
+}
+
+@keyframes bodyFade {
+  to {
+    opacity: 1;
   }
 }
+
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.75);
+  transition: background 0.3s ease;
+}
+
 
 

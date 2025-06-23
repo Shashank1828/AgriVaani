@@ -79,14 +79,30 @@ async function getAIResponse(question) {
   }
 }
 
+// ✅ Hindi Speech Fix
 function speakHindi(text) {
   if ('speechSynthesis' in window) {
-    const speech = new SpeechSynthesisUtterance();
-    speech.lang = 'hi-IN';
-    speech.text = text;
-    window.speechSynthesis.speak(speech);
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'hi-IN';
+
+    const voices = speechSynthesis.getVoices();
+    const hindiVoice = voices.find(v => v.lang === 'hi-IN' || v.name.toLowerCase().includes('hindi'));
+
+    if (hindiVoice) {
+      utterance.voice = hindiVoice;
+    } else {
+      console.warn("Hindi voice not found. Using default.");
+    }
+
+    speechSynthesis.cancel(); // cancel any previous speech
+    window.speechSynthesis.speak(utterance);
   }
 }
+
+// force load voices
+speechSynthesis.onvoiceschanged = () => {
+  speechSynthesis.getVoices();
+};
 
 // Auth Logic
 const userIcon = document.getElementById('user-icon');
@@ -109,7 +125,7 @@ const userMobileDisplay = document.getElementById('user-mobile-display');
 userIcon.addEventListener('click', () => {
   const user = JSON.parse(localStorage.getItem('loggedInUser'));
   if (user) {
-    
+  
     userMobileDisplay.textContent = `मोबाइल: ${user.mobile}`;
     userInfoModal.classList.remove('hidden');
   } else {
@@ -138,7 +154,6 @@ logoutBtn.addEventListener('click', () => {
   userInfoModal.classList.add('hidden');
 });
 
-// Tabs
 loginTab.addEventListener('click', () => {
   loginTab.classList.add('active');
   signupTab.classList.remove('active');
@@ -222,14 +237,3 @@ loginForm.addEventListener('submit', async (e) => {
     authMsg.style.color = 'red';
   }
 });
-
-// Sound effect files (you can use your own MP3/OGG links if needed)
-const clickSound = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_70ef926726.mp3');
-const hoverSound = new Audio('https://cdn.pixabay.com/audio/2022/10/27/audio_5b2c158fbd.mp3');
-
-// Add click sounds to buttons
-document.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => clickSound.play());
-  btn.addEventListener('mouseenter', () => hoverSound.play());
-});
-
