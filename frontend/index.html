@@ -2,19 +2,102 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>AgriVaani - मौसम सहायक</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌾 AgriVaani - किसानों का डिजिटल सहयोगी</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+
+  <!-- Header Section -->
+  <header class="header">
+    <h1>🌾 AgriVaani <span>| किसानों का डिजिटल सहयोगी</span></h1>
+    <p>मौसम, कृषि सलाह और बाज़ार जानकारी के लिए अपने सवाल पूछें</p>
+    <!-- User Icon -->
+    <div class="user-icon" id="user-icon">👤</div>
+
+    
+  </header>
+
+  <!-- Main App Section -->
   <div class="container">
-    <h1>👨‍🌾 भारत का किसान बोले</h1>
-    <button id="mic-btn">🎤 बोलो</button>
-    <p id="user-question">...</p>
-    <div id="response-box">
-      <h3>🌦 जवाब:</h3>
-      <p id="response-text">...</p>
+    <div class="user-question" id="user-question">
+      अपना प्रश्न पूछने के लिए माइक बटन दबाएं...
+    </div>
+
+    <button class="mic-btn" id="mic-btn">🎤</button>
+    <div class="loader" id="loader"></div>
+
+    <div class="response-box" id="response-box">
+      <h3>🌱 AI की प्रतिक्रिया:</h3>
+      <p class="response-text" id="response-text">
+        यहां आपको AI से मिले उत्तर दिखाई देंगे...
+      </p>
     </div>
   </div>
+
+  <!-- Login / Signup Modal -->
+  <div id="auth-modal" class="auth-modal hidden">
+    <div class="auth-box">
+      <span class="close-btn" id="close-auth">&times;</span>
+
+      <div class="auth-tabs">
+        <button id="login-tab" class="active">Login</button>
+        <button id="signup-tab">Signup</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <input type="text" placeholder="📱 मोबाइल नंबर" id="login-mobile" required>
+        <input type="password" placeholder="🔒 पासवर्ड" id="login-password" required>
+        <button type="submit">🔓 लॉगिन करें</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signup-form" class="auth-form hidden">
+        <input type="text" placeholder="👤 नाम" id="signup-name" required>
+        <input type="text" placeholder="🏠 क्षेत्र" id="signup-area" required>
+        <select id="signup-country" required>
+          <option value="">🌍 देश चुनें</option>
+          <option value="भारत">भारत</option>
+          <option value="नेपाल">नेपाल</option>
+        </select>
+        <select id="signup-state" required>
+          <option value="">📍 राज्य चुनें</option>
+          <option value="बिहार">बिहार</option>
+          <option value="उत्तर प्रदेश">उत्तर प्रदेश</option>
+          <option value="मध्य प्रदेश">मध्य प्रदेश</option>
+          <option value="राजस्थान">राजस्थान</option>
+        </select>
+        <input type="text" placeholder="📱 मोबाइल नंबर" id="signup-mobile" required>
+        <input type="password" placeholder="🔒 पासवर्ड" id="signup-password" required>
+        <button type="submit">📝 खाता बनाएं</button>
+      </form>
+
+      <div class="auth-message" id="auth-message"></div>
+    </div>
+  </div>
+
+  <!-- ✅ User Info Modal -->
+  <div id="user-info-modal" class="auth-modal hidden">
+    <div class="auth-box">
+      <span class="close-btn" id="close-user-info">&times;</span>
+      <h3>👤 आपका विवरण</h3>
+     
+      <p id="user-mobile-display">मोबाइल: -</p>
+      <button id="logout-btn">🚪 लॉगआउट करें</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>© 2025 AgriVaani | भारतीय किसानों के लिए बनाया गया | Developed By Shashank & Payal</p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

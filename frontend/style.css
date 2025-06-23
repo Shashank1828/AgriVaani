@@ -1,29 +1,452 @@
+/* Base Styles */
+
 body {
-  font-family: 'Arial', sans-serif;
-  background: #e6ffe6;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: linear-gradient(45deg, #2c7a51, #38a169, #68d391);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: #1a202c;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* Header */
+.header {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
   text-align: center;
-  padding: 30px;
+  position: relative;
 }
+
+.header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #2f855a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.header h1 span {
+  font-size: 0.8em;
+  color: #4a5568;
+}
+
+.header p {
+  margin: 5px 0 0;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+/* User Icon */
+.user-icon {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: #38a169;
+  padding: 10px;
+  border-radius: 50%;
+  color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* Container */
 .container {
-  background: white;
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  max-width: 400px;
-  margin: auto;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  overflow: hidden;
 }
-button {
-  font-size: 20px;
-  padding: 10px 20px;
-  background-color: #4CAF50;
+
+/* Mic Button */
+.mic-btn {
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin: 1.5rem auto;
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mic-btn:hover {
+  transform: scale(1.05);
+}
+
+.mic-btn:active {
+  transform: scale(0.95);
+}
+
+.user-question {
+  background: #edf2f7;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  border-left: 4px solid #48bb78;
+}
+
+/* Response Box */
+.response-box {
+  background: #f0fff4;
+  padding: 1.2rem;
+  border-radius: 12px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid rgba(72, 187, 120, 0.3);
+}
+
+.response-box h3 {
+  margin-top: 0;
+  color: #2f855a;
+}
+
+.response-text {
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* Scrollbar */
+.response-box::-webkit-scrollbar {
+  width: 8px;
+}
+.response-box::-webkit-scrollbar-thumb {
+  background: #48bb78;
+  border-radius: 10px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: white;
+  font-size: 0.8rem;
+  padding: 1rem;
+}
+
+/* Loader */
+.loader {
+  display: none;
+  margin: 1rem auto;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #48bb78;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ------------------------------------
+   Login / Signup Modal
+------------------------------------ */
+.auth-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.auth-modal.hidden {
+  display: none;
+}
+
+.auth-box {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+.auth-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+
+.auth-tabs button {
+  flex: 1;
+  padding: 0.5rem;
+  font-weight: bold;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.auth-tabs button.active {
+  border-color: #38a169;
+  color: #2f855a;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.auth-form input,
+.auth-form select {
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  font-size: 0.95rem;
+}
+
+.auth-form button {
+  padding: 0.8rem;
+  background: #38a169;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.auth-form button:hover {
+  background: #2f855a;
+}
+
+.auth-message {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+  color: #e53e3e;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #aaa;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .mic-btn {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
+  }
+
+  .user-icon {
+    top: 10px;
+    right: 10px;
+  }
+}
+/* ------------------------------
+   User Info Modal Styling
+------------------------------ */
+
+#user-info-modal {
+  backdrop-filter: blur(6px); /* 🔍 Background blur */
+  background-color: rgba(0, 0, 0, 0.3); /* Darker overlay */
+}
+
+#user-info-modal .auth-box {
+  background: rgba(255, 255, 255, 0.95); /* Soft card */
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+  text-align: center;
+  width: 90%;
+  max-width: 380px;
+}
+
+#user-info-modal h3 {
+  color: #2f855a;
+  margin-bottom: 1.2rem;
+  font-size: 1.4rem;
+}
+
+#user-info-modal p {
+  background: rgba(240, 255, 244, 0.9);
+  color: #1a202c;
+  padding: 1rem;
+  border-left: 4px solid #38a169;
+  border-radius: 12px;
+  font-weight: 600;
+  margin: 0.8rem 0;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+#user-info-modal #logout-btn {
+  margin-top: 1.5rem;
+  background: #e53e3e;
   border: none;
   color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-#response-box {
-  margin-top: 20px;
-  background-color: #f0fff0;
-  padding: 15px;
-  border-radius: 10px;
+
+#user-info-modal #logout-btn:hover {
+  background: #c53030;
+  transform: scale(1.05);
 }
+
+#user-info-modal .close-btn {
+  color: #555;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+
+/* ------------------------------
+   Animations for Beautiful UI
+------------------------------ */
+
+/* Fade + Scale in for modals */
+@keyframes fadeScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse Animation for Mic */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(72, 187, 120, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+  }
+}
+
+.mic-btn.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Entry animation for modals and boxes */
+.auth-box, #user-info-modal .auth-box, .container, .response-box {
+  animation: fadeScale 0.5s ease forwards;
+}
+
+/* Loader Pulse Effect */
+@keyframes loaderPulse {
+  0% {
+    transform: scale(1);
+    border-top-color: #48bb78;
+  }
+  50% {
+    transform: scale(1.2);
+    border-top-color: #38a169;
+  }
+  100% {
+    transform: scale(1);
+    border-top-color: #48bb78;
+  }
+}
+
+.loader {
+  animation: loaderPulse 1.2s ease-in-out infinite;
+}
+
+/* Glow + Lift on Hover for Main Buttons */
+.auth-form button,
+#user-info-modal #logout-btn {
+  box-shadow: 0 4px 10px rgba(56, 161, 105, 0.3);
+}
+
+.auth-form button:hover,
+#user-info-modal #logout-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(56, 161, 105, 0.5);
+}
+
+/* Response box shimmer (background moving pattern) */
+.response-box {
+  position: relative;
+  overflow: hidden;
+}
+
+.response-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -75%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+
+
