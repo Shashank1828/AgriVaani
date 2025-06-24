@@ -12,3 +12,5 @@ response = model.generate_content("क्या आज बारिश होग
 
 # Step 4: Print the response
 print("Gemini's Reply:", response.text)
+
+

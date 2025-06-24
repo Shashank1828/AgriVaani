@@ -32,6 +32,40 @@ if __name__ == "__main__":
     app.run(debug=True)
     """
 
+"""
+import google.generativeai as genai
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+# 🔐 Step 1: Add your API key here
+GOOGLE_API_KEY = "AIzaSyDkON7bo8BWTI_bI3-cO7uKzxPuuw53Coo"
+genai.configure(api_key=GOOGLE_API_KEY)
+
+# 🔁 Step 2: Create model object
+model = genai.GenerativeModel("models/gemini-1.5-pro")
+
+# ✅ Step 3: Set up Flask app
+app = Flask(__name__)
+CORS(app)
+
+# 🔄 Step 4: API endpoint to receive user message
+@app.route("/api/message", methods=["POST"])
+def message():
+    data = request.get_json()
+    user_input = data.get("message", "")
+ 
+    try:
+        response = model.generate_content(user_input)
+        return jsonify({"reply": response.text})
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"reply": "❌ कोई त्रुटि हुई!"}), 500
+
+# ▶ Step 5: Run the server
+if __name__ == "__main__":
+    app.run(debug=True)
+    """
+
 import google.generativeai as genai
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
@@ -121,7 +155,16 @@ def login():
         return jsonify({"success": True, "message": "Login successful!"})
     else:
         return jsonify({"success": False, "message": "Invalid mobile or password."})
+    
+
+
+
+
+
+    
 
 # ▶ Run the server
 if __name__ == "__main__":
     app.run(debug=True)
+
+

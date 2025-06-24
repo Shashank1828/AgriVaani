@@ -237,3 +237,145 @@ loginForm.addEventListener('submit', async (e) => {
     authMsg.style.color = 'red';
   }
 });
+
+// 🌦️ Weather Feature
+const weatherBtn = document.getElementById('weather-btn');
+const weatherModal = document.getElementById('weather-modal');
+const weatherText = document.getElementById('weather-text');
+const weatherClose = document.getElementById('weather-close');
+
+weatherBtn.addEventListener('click', () => {
+  weatherText.textContent = "स्थान की जानकारी प्राप्त की जा रही है...";
+  weatherModal.classList.remove('hidden');
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      try {
+        const apiKey = "mukUJUKYnnjzcLsHUARDOgZeLMo2hYsf";
+        const url = `https://api.tomorrow.io/v4/weather/forecast?location=${lat},${lon}&apikey=${apiKey}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+        const t = data.timelines?.daily?.[0]?.values;
+
+        if (!t) {
+          weatherText.textContent = "मौसम डेटा उपलब्ध नहीं है।";
+          return;
+        }
+
+        const avgTemp = t.temperatureAvg;
+        const rainChance = t.precipitationProbabilityAvg;
+
+        let cropAdvice = "";
+        if (avgTemp >= 25 && rainChance >= 50) {
+          cropAdvice = "🌾 धान (Rice) के लिए उपयुक्त समय।";
+        } else if (avgTemp >= 18 && rainChance <= 30) {
+          cropAdvice = "🌿 गेहूं या चना के लिए बेहतर मौसम।";
+        } else {
+          cropAdvice = "🧑‍🌾 मौसम अनिश्चित है, देखभाल करें।";
+        }
+
+        weatherText.innerHTML = `
+          📍 स्थिति: ${lat.toFixed(2)}, ${lon.toFixed(2)}<br><br>
+          🌡️ तापमान: <strong>${avgTemp}°C</strong><br>
+          🌧️ बारिश की संभावना: <strong>${rainChance}%</strong><br><br>
+          ✅ सलाह: <strong>${cropAdvice}</strong>
+        `;
+      } catch (error) {
+        weatherText.textContent = "❌ मौसम डेटा प्राप्त नहीं हो सका।";
+      }
+    }, () => {
+      weatherText.textContent = "📍 स्थान अनुमति अस्वीकृत!";
+    });
+  } else {
+    weatherText.textContent = "❌ ब्राउज़र स्थान समर्थन नहीं करता।";
+  }
+});
+
+weatherClose.addEventListener('click', () => {
+  weatherModal.classList.add('hidden');
+});
+document.getElementById("speak-weather").addEventListener("click", () => {
+  const weatherRawText = document.getElementById("weather-text").innerText || document.getElementById("weather-text").textContent;
+  speakHindi(weatherRawText);
+});
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const newsBtn = document.getElementById('news-btn');
+  const newsModal = document.getElementById('news-modal');
+  const newsClose = document.getElementById('news-close');
+  const newsList = document.getElementById('news-list');
+  const nextNews = document.getElementById('next-news');
+  const prevNews = document.getElementById('prev-news');
+
+  const agriNews = [
+    "केंद्र सरकार ने MSP में ₹200 की वृद्धि की घोषणा की।",
+    "खरीफ फसलों की बुआई 10% अधिक हुई इस वर्ष।",
+    "बिहार में पहली बार ड्रोन से कीटनाशक छिड़काव शुरू।",
+    "कर्नाटक में भारी बारिश से प्याज फसल को नुकसान।",
+    "ICAR ने नया हाई-प्रोटीन गेहूं किस्म लॉन्च किया।",
+    "किसानों के लिए 0% ब्याज दर पर क्रेडिट कार्ड योजना।",
+    "गुजरात में ऑर्गेनिक खेती को बढ़ावा मिलेगा सब्सिडी से।",
+    "सभी किसानों को सॉयल हेल्थ कार्ड देने का लक्ष्य रखा।",
+    "भारत से आम का निर्यात UAE को 15% बढ़ा।",
+    "पंजाब में पानी की कमी से धान की खेती में गिरावट।",
+    "बायो-फर्टिलाइज़र पर नई रिसर्च रिपोर्ट जारी की।",
+    "मुफ्त बीज वितरण कार्यक्रम शुरू।",
+    "AI आधारित फसल बीमा प्लेटफॉर्म लॉन्च।",
+    "गेहूं की रिकॉर्ड उत्पादन की उम्मीद।",
+    "फसल कैलेंडर ऐप अब हिंदी में भी उपलब्ध।"
+  ];
+
+  let currentNewsIndex = 0;
+  const pageSize = 3;
+
+  function renderNews() {
+    newsList.innerHTML = '';
+    const visibleNews = agriNews.slice(currentNewsIndex, currentNewsIndex + pageSize);
+
+    visibleNews.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'news-card';
+      div.innerHTML = `<strong>📰 खबर ${currentNewsIndex + index + 1}:</strong> ${item}`;
+      newsList.appendChild(div);
+    });
+
+    prevNews.disabled = currentNewsIndex === 0;
+    nextNews.disabled = currentNewsIndex + pageSize >= agriNews.length;
+  }
+
+  newsBtn.addEventListener('click', () => {
+    currentNewsIndex = 0;
+    renderNews();
+    newsModal.classList.remove('hidden');
+  });
+
+  newsClose.addEventListener('click', () => {
+    newsModal.classList.add('hidden');
+  });
+
+  nextNews.addEventListener('click', () => {
+    if (currentNewsIndex + pageSize < agriNews.length) {
+      currentNewsIndex += pageSize;
+      renderNews();
+    }
+  });
+
+  prevNews.addEventListener('click', () => {
+    if (currentNewsIndex - pageSize >= 0) {
+      currentNewsIndex -= pageSize;
+      renderNews();
+    }
+  });
+});
+
+
+
+

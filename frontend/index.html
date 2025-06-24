@@ -96,10 +96,59 @@
     <p>© 2025 AgriVaani | भारतीय किसानों के लिए बनाया गया | Developed By Shashank & Payal</p>
   </div>
 
+
+  <!-- 🌦️ Weather Smart Button -->
+<button id="weather-btn" class="weather-btn">🌦️ मौसम सलाह</button>
+
+<!-- Weather Modal -->
+<div id="weather-modal" class="auth-modal hidden">
+  <div class="auth-box">
+    <span class="close-btn" id="weather-close">&times;</span>
+    <h3>🌾 स्मार्ट मौसम सलाह</h3>
+    <p id="weather-text">मौसम विवरण लोड हो रहा है...</p>
+    <!-- Weather Icon -->
+<div id="weather-icon" style="font-size: 3rem; margin-bottom: 1rem;">⛅</div>
+
+<!-- Speak Button -->
+<button id="speak-weather" style="margin-top: 1rem; background: #3182ce; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+  🔊 मौसम सुनें
+</button>
+
+  </div>
+</div>
+
+
+
+
+<button id="news-btn" class="weather-btn" style="top: 160px; background: linear-gradient(135deg, #ed8936, #dd6b20);">
+  📰 कृषि समाचार
+</button>
+<div id="news-modal" class="auth-modal hidden">
+  <div class="auth-box">
+    <span class="close-btn" id="news-close">&times;</span>
+    <h3>📰 ताज़ा कृषि समाचार</h3>
+    <p id="news-text">भारत की ताज़ा कृषि से जुड़ी खबरें:</p>
+    <div id="news-list" style="margin-top: 1rem;"></div>
+
+    <div id="news-controls" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+      <button id="prev-news">⬅️</button>
+      <button id="next-news">➡️</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
+
+
 
 
