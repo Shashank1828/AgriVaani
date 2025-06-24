@@ -750,3 +750,47 @@ body {
 
 
 
+
+/* Mandi Prices Button */
+.mandi-btn {
+  position: absolute;
+  top: 220px;
+  left: 20px;
+  background: linear-gradient(135deg, #805ad5, #6b46c1);
+  color: white;
+  padding: 0.7rem 1.2rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  z-index: 99;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.mandi-btn:hover {
+  background: #553c9a;
+  transform: scale(1.05);
+}
+
+/* Mandi Modal */
+#mandi-modal .auth-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  max-width: 600px;
+  width: 90%;
+  text-align: left;
+  animation: fadeInUp 0.4s ease;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+#mandi-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}

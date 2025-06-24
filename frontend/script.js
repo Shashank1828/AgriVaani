@@ -379,3 +379,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+const mandiBtn = document.getElementById('mandi-btn');
+const mandiModal = document.getElementById('mandi-modal');
+const mandiClose = document.getElementById('mandi-close');
+const mandiContent = document.getElementById('mandi-content');
+
+mandiBtn.addEventListener('click', async () => {
+  mandiModal.classList.remove('hidden');
+  mandiContent.textContent = "⏳ लोड हो रहा है...";
+
+  try {
+    const res = await fetch('http://127.0.0.1:5000/api/mandi');
+    const data = await res.json();
+
+    if (data.length === 0) {
+      mandiContent.textContent = "❌ कोई डेटा नहीं मिला।";
+      return;
+    }
+
+    mandiContent.innerHTML = data.map(item => `
+      <div style="margin-bottom: 10px;">
+        🏪 <strong>${item.market}</strong> – ${item.crop} : ₹${item.price}/क्विंटल
+      </div>
+    `).join('');
+  } catch (err) {
+    mandiContent.textContent = "⚠️ डेटा प्राप्त करने में त्रुटि।";
+  }
+});
+
+mandiClose.addEventListener('click', () => {
+  mandiModal.classList.add('hidden');
+});
