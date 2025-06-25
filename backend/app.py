@@ -65,7 +65,7 @@ def message():
 if __name__ == "__main__":
     app.run(debug=True)
     """
-"""
+
 import google.generativeai as genai
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
@@ -160,122 +160,122 @@ def login():
 
 
 
+@app.route('/api/mandi', methods=['GET'])
+def get_mandi_data():
+    page = int(request.args.get('page', 1))
+    page_size = 15
+    offset = (page - 1) * page_size
+
+    conn = sqlite3.connect('mandi_data.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM mandi_rates")
+    total = cursor.fetchone()[0]
+
+    cursor.execute("SELECT crop, state, rate FROM mandi_rates LIMIT ? OFFSET ?", (page_size, offset))
+    rows = cursor.fetchall()
+
+    data = [{"crop": row[0], "state": row[1], "rate": row[2]} for row in rows]
+
+    return jsonify({
+        "data": data,
+        "total": total,
+        "page": page,
+        "total_pages": (total + page_size - 1) // page_size
+    })
+
+
+
+
+
+
+@app.route("/api/farming-calendar", methods=["GET"])
+def get_calendar():
+    state = request.args.get("state", "").strip()
+    month = request.args.get("month", "").strip()
+
+    if not state:
+        return jsonify({"error": "राज्य आवश्यक है"}), 400
+
+    try:
+        conn = sqlite3.connect("crop_calendar.db")
+        cur = conn.cursor()
+        query = "SELECT month, crops, activities, precautions FROM calendar WHERE state = ?"
+        params = [state]
+
+        if month.isdigit():
+            query += " AND month = ?"
+            params.append(int(month))
+
+        cur.execute(query, params)
+        rows = cur.fetchall()
+        conn.close()
+
+        result = [{
+            "month": row[0],
+            "crops": row[1],
+            "activities": row[2],
+            "precautions": row[3]
+        } for row in rows]
+
+        return jsonify({"state": state, "data": result})
+
+    except Exception as e:
+        return jsonify({"error": "सर्वर त्रुटि"}), 500
+    
+
+
+
+
+# ✅ Fertilizer database path declared here
+FERTILIZER_DB = "fertilizer.db"
+
+@app.route("/api/fertilizer", methods=["GET"])
+def get_fertilizer_advice():
+    crop = request.args.get("crop", "").strip()
+    area = request.args.get("area", "").strip()
+    unit = request.args.get("unit", "hectare").strip()
+
+    if not crop or not area:
+        return jsonify({"error": "फसल और क्षेत्र आवश्यक हैं।"}), 400
+
+    try:
+        area = float(area)
+        if unit == "acre":
+            area *= 0.4047  # convert acre to hectare
+
+        conn = sqlite3.connect(FERTILIZER_DB)
+        cursor = conn.cursor()
+        cursor.execute("SELECT urea_kg_per_hectare, dap_kg_per_hectare, potash_kg_per_hectare, water_liters_per_hectare FROM fertilizer_data WHERE crop = ?", (crop,))
+        row = cursor.fetchone()
+        conn.close()
+
+        if not row:
+            return jsonify({"error": "इस फसल की जानकारी उपलब्ध नहीं है।"}), 404
+
+        result = {
+            "crop": crop,
+            "area_in_hectare": round(area, 2),
+            "urea_kg": round(row[0] * area, 2),
+            "dap_kg": round(row[1] * area, 2),
+            "potash_kg": round(row[2] * area, 2),
+            "water_liters": round(row[3] * area, 2)
+        }
+
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": f"सर्वर त्रुटि: {str(e)}"}), 500
+
 
     
+
+    
+
 
 # ▶ Run the server
 if __name__ == "__main__":
     app.run(debug=True)
 
 
-"""
 
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import sqlite3
-import google.generativeai as genai
-
-# 🔐 Configure Gemini API
-GOOGLE_API_KEY = "AIzaSyDkON7bo8BWTI_bI3-cO7uKzxPuuw53Coo"
-genai.configure(api_key=GOOGLE_API_KEY)
-
-# 🔁 Initialize Flask App
-app = Flask(__name__)
-CORS(app)
-
-# ---------------------------
-# 🤖 AI Chat Endpoint
-# ---------------------------
-@app.route('/api/message', methods=['POST'])
-def generate_ai_reply():
-    data = request.get_json()
-    message = data.get('message', '')
-    if not message:
-        return jsonify({'reply': "❌ कोई इनपुट प्राप्त नहीं हुआ।"})
-
-    try:
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(message)
-        reply = response.text.strip()
-        return jsonify({'reply': reply})
-    except Exception as e:
-        return jsonify({'reply': f"⚠️ उत्तर प्राप्त करने में त्रुटि: {str(e)}"})
-
-# ---------------------------
-# 🔐 Registration Endpoint
-# ---------------------------
-@app.route('/api/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    name = data.get('name')
-    area = data.get('area')
-    country = data.get('country')
-    state = data.get('state')
-    mobile = data.get('mobile')
-    password = data.get('password')
-
-    try:
-        conn = sqlite3.connect('users.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE mobile = ?", (mobile,))
-        if cursor.fetchone():
-            return jsonify({'success': False, 'message': '📱 मोबाइल नंबर पहले से रजिस्टर्ड है।'})
-
-        cursor.execute("INSERT INTO users (name, area, country, state, mobile, password) VALUES (?, ?, ?, ?, ?, ?)",
-                       (name, area, country, state, mobile, password))
-        conn.commit()
-        conn.close()
-        return jsonify({'success': True, 'message': '✅ पंजीकरण सफल रहा।'})
-    except Exception as e:
-        return jsonify({'success': False, 'message': f"⚠️ त्रुटि: {str(e)}"})
-
-# ---------------------------
-# 🔐 Login Endpoint
-# ---------------------------
-@app.route('/api/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    mobile = data.get('mobile')
-    password = data.get('password')
-
-    try:
-        conn = sqlite3.connect('users.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT name FROM users WHERE mobile = ? AND password = ?", (mobile, password))
-        row = cursor.fetchone()
-        conn.close()
-
-        if row:
-            return jsonify({'success': True, 'message': '✅ लॉगिन सफल रहा।', 'name': row[0]})
-        else:
-            return jsonify({'success': False, 'message': '❌ मोबाइल नंबर या पासवर्ड गलत है।'})
-    except Exception as e:
-        return jsonify({'success': False, 'message': f"⚠️ लॉगिन त्रुटि: {str(e)}"})
-
-# ---------------------------
-# 🌾 मण्डी का भाव SQLite Fetch Function
-# ---------------------------
-def fetch_mandi_data():
-    conn = sqlite3.connect('mandi_data.db')  # your mandi price DB file
-    cursor = conn.cursor()
-    cursor.execute("SELECT market, crop, price FROM mandi_prices")
-    rows = cursor.fetchall()
-    conn.close()
-    return [{"market": r[0], "crop": r[1], "price": r[2]} for r in rows]
-
-# ---------------------------
-# 🌾 मण्डी का भाव API Route
-# ---------------------------
-@app.route('/api/mandi', methods=['GET'])
-def get_mandi_data():
-    try:
-        data = fetch_mandi_data()
-        return jsonify(data)
-    except Exception as e:
-        return jsonify([]), 500
-
-# ---------------------------
-# 🔃 Run the App
-# ---------------------------
-if __name__ == '__main__':
-    app.run(debug=True)

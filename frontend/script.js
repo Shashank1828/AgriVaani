@@ -378,35 +378,308 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
+// 🆕 Mandi Modal Logic
 const mandiBtn = document.getElementById('mandi-btn');
 const mandiModal = document.getElementById('mandi-modal');
 const mandiClose = document.getElementById('mandi-close');
-const mandiContent = document.getElementById('mandi-content');
+const mandiList = document.getElementById('mandi-list');
+const mandiNext = document.getElementById('mandi-next');
+const mandiPrev = document.getElementById('mandi-prev');
 
-mandiBtn.addEventListener('click', async () => {
-  mandiModal.classList.remove('hidden');
-  mandiContent.textContent = "⏳ लोड हो रहा है...";
+let mandiPage = 1;
 
+async function loadMandiData(page) {
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/mandi');
-    const data = await res.json();
+    const res = await fetch(`http://127.0.0.1:5000/api/mandi?page=${page}`);
+    const result = await res.json();
 
-    if (data.length === 0) {
-      mandiContent.textContent = "❌ कोई डेटा नहीं मिला।";
-      return;
-    }
+    mandiList.innerHTML = '';
+    result.data.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.innerHTML = `🌾 <strong>${item.crop}</strong> (${item.state}) - ₹${item.rate}/क्विंटल`;
+      mandiList.appendChild(div);
+    });
 
-    mandiContent.innerHTML = data.map(item => `
-      <div style="margin-bottom: 10px;">
-        🏪 <strong>${item.market}</strong> – ${item.crop} : ₹${item.price}/क्विंटल
-      </div>
-    `).join('');
+    mandiPrev.disabled = page === 1;
+    mandiNext.disabled = page >= result.total_pages;
   } catch (err) {
-    mandiContent.textContent = "⚠️ डेटा प्राप्त करने में त्रुटि।";
+    mandiList.innerHTML = "❌ डेटा लोड नहीं हुआ।";
   }
+}
+
+mandiBtn.addEventListener('click', () => {
+  mandiModal.classList.remove('hidden');
+  mandiPage = 1;
+  loadMandiData(mandiPage);
 });
 
 mandiClose.addEventListener('click', () => {
   mandiModal.classList.add('hidden');
 });
+
+mandiNext.addEventListener('click', () => {
+  mandiPage++;
+  loadMandiData(mandiPage);
+});
+
+mandiPrev.addEventListener('click', () => {
+  if (mandiPage > 1) {
+    mandiPage--;
+    loadMandiData(mandiPage);
+  }
+});
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const calendarBtn = document.getElementById('calendar-btn');
+  const calendarModal = document.getElementById('calendar-modal');
+  const closeCalendar = document.getElementById('close-calendar');
+  const calendarState = document.getElementById('calendar-state');
+  const calendarMonth = document.getElementById('calendar-month');
+  const calendarSearch = document.getElementById('calendar-search');
+  const calendarResults = document.getElementById('calendar-results');
+  const speakCalendar = document.getElementById('speak-calendar');
+
+  calendarBtn.addEventListener('click', () => {
+    calendarModal.classList.remove('hidden');
+    calendarResults.innerHTML = '<p>राज्य और माह चुनें और खोजें।</p>';
+  });
+
+  closeCalendar.addEventListener('click', () => {
+    calendarModal.classList.add('hidden');
+  });
+
+  calendarSearch.addEventListener('click', async () => {
+    const state = calendarState.value;
+    const month = calendarMonth.value;
+
+    if (!state) {
+      calendarResults.innerHTML = '<p class="error">⚠️ कृपया राज्य चुनें</p>';
+      return;
+    }
+
+    calendarResults.innerHTML = '<div class="loader"></div>';
+
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/api/farming-calendar?state=${state}&month=${month}`);
+      const data = await res.json();
+
+      if (!data.data || data.data.length === 0) {
+        calendarResults.innerHTML = '<p>कोई जानकारी उपलब्ध नहीं।</p>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(item => {
+        const monthName = getHindiMonth(item.month);
+        html += `
+          <div class="calendar-card">
+            <h4>${monthName}</h4>
+            <p><strong>🌾 फसलें:</strong> ${item.crops}</p>
+            <p><strong>🔧 गतिविधियाँ:</strong> ${item.activities}</p>
+            <p><strong>⚠️ सावधानियाँ:</strong> ${item.precautions}</p>
+          </div>
+        `;
+      });
+
+      calendarResults.innerHTML = html;
+    } catch (err) {
+      calendarResults.innerHTML = '<p class="error">❌ सर्वर समस्या</p>';
+    }
+  });
+
+  speakCalendar.addEventListener('click', () => {
+    const cards = document.querySelectorAll('.calendar-card');
+    let speech = '';
+    cards.forEach(card => speech += card.textContent + '। ');
+    speakHindi(speech || 'कोई डेटा नहीं मिला');
+  });
+
+  function getHindiMonth(num) {
+    const names = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+    return names[num - 1] || num;
+  }
+
+  function speakHindi(text) {
+    if ('speechSynthesis' in window) {
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'hi-IN';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(msg);
+    }
+  }
+});
+
+
+
+// 🌾 Fertilizer Calculator Logic
+document.addEventListener('DOMContentLoaded', function () {
+  const fertBtn = document.getElementById('fertilizer-btn');
+  const fertModal = document.getElementById('fertilizer-modal');
+  const fertClose = document.getElementById('fertilizer-close');
+  const fertCalcBtn = document.getElementById('fertilizer-calculate');
+  const fertResult = document.getElementById('fertilizer-result');
+
+  // Open modal
+  fertBtn.addEventListener('click', () => {
+    fertResult.innerHTML = "";
+    fertModal.classList.remove('hidden');
+  });
+
+  // Close modal
+  fertClose.addEventListener('click', () => {
+    fertModal.classList.add('hidden');
+  });
+
+  // Calculate Fertilizer
+  fertCalcBtn.addEventListener('click', async () => {
+    const crop = document.getElementById('fertilizer-crop').value.trim().toLowerCase();
+    const area = parseFloat(document.getElementById('fertilizer-area').value);
+    const unit = document.getElementById('fertilizer-unit').value;
+
+    if (!crop || isNaN(area) || area <= 0) {
+      fertResult.innerHTML = "⚠️ कृपया सभी फ़ील्ड सही से भरें।";
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/api/fertilizer?crop=${crop}&area=${area}&unit=${unit}`);
+      const data = await res.json();
+
+      if (data.error) {
+        fertResult.innerHTML = `❌ ${data.error}`;
+      } else {
+        fertResult.innerHTML = `
+          ✅ <strong>${data.crop}</strong> के लिए <strong>${data.area_in_hectare} हेक्टेयर</strong> में:
+          <ul>
+            <li>💊 यूरिया: <strong>${data.urea_kg} kg</strong></li>
+            <li>🌿 DAP: <strong>${data.dap_kg} kg</strong></li>
+            <li>🧂 पोटाश: <strong>${data.potash_kg} kg</strong></li>
+          </ul>
+        `;
+      }
+    } catch (err) {
+      fertResult.innerHTML = "❌ सर्वर से डेटा नहीं मिला।";
+    }
+  });
+});
+
+
+
+
+  const lockerBtn = document.getElementById("krishi-locker-btn");
+  const lockerModal = document.getElementById("krishi-locker-modal");
+  const lockerClose = document.getElementById("krishi-locker-close");
+  const uploadBtn = document.getElementById("upload-btn");
+  const fileInput = document.getElementById("file-upload");
+  const fileList = document.getElementById("file-list");
+  const uploadMsg = document.getElementById("upload-message");
+
+  let uploadedFiles = [];
+
+  // Open modal
+  lockerBtn.addEventListener("click", () => {
+    lockerModal.classList.remove("hidden");
+  });
+
+  // Close modal
+  lockerClose.addEventListener("click", () => {
+    lockerModal.classList.add("hidden");
+  });
+
+  // Upload files to memory
+  uploadBtn.addEventListener("click", () => {
+    const files = Array.from(fileInput.files);
+
+    if (files.length === 0) {
+      uploadMsg.textContent = "कृपया पहले कुछ फ़ाइलें चुनें।";
+      uploadMsg.style.color = "red";
+      return;
+    }
+
+    uploadedFiles.push(...files);
+    displayFiles();
+
+    uploadMsg.textContent = `${files.length} फ़ाइलें सफलतापूर्वक अपलोड हो गईं!`;
+    uploadMsg.style.color = "green";
+
+    fileInput.value = "";
+  });
+
+  function displayFiles() {
+    fileList.innerHTML = "";
+
+    uploadedFiles.forEach((file, index) => {
+      const li = document.createElement("li");
+
+      const link = document.createElement("a");
+      link.textContent = file.name;
+      link.href = URL.createObjectURL(file);
+      link.download = file.name;
+      link.target = "_blank";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "❌";
+      removeBtn.onclick = () => {
+        uploadedFiles.splice(index, 1);
+        displayFiles();
+      };
+
+      li.appendChild(link);
+      li.appendChild(removeBtn);
+      fileList.appendChild(li);
+    });
+  }
+
+
+
+
+
+  
+
+
+
+
+
+
+
+  // Get elements
+  const aboutBtn = document.getElementById("aboutBtn");
+  const contactBtn = document.getElementById("contactBtn");
+  const popupOverlay = document.getElementById("popupOverlay");
+  const popupTitle = document.getElementById("popupTitle");
+  const popupContent = document.getElementById("popupContent");
+  const closePopup = document.getElementById("closePopup");
+
+  // About Us button click
+  aboutBtn.addEventListener("click", () => {
+    popupTitle.innerText = "हमारे बारे में";
+    popupContent.innerText = "AgriVaani किसानों के लिए एक डिजिटल साथी है जो मौसम, कृषि सलाह और मंडी भाव की जानकारी प्रदान करता है।";
+    popupOverlay.style.display = "block";
+  });
+
+  // Contact Us button click
+  contactBtn.addEventListener("click", () => {
+    popupTitle.innerText = "संपर्क करें";
+    popupContent.innerText = "📧 support@agrivaani.in\n📞 +91-1234567890";
+    popupOverlay.style.display = "block";
+  });
+
+  // Close popup on ✖
+  closePopup.addEventListener("click", () => {
+    popupOverlay.style.display = "none";
+  });
+
+  // Optional: Close popup when clicking outside content
+  window.addEventListener("click", (e) => {
+    if (e.target === popupOverlay) {
+      popupOverlay.style.display = "none";
+    }
+  });
+
+
+
+
+  
