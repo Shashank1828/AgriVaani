@@ -21,6 +21,28 @@
     <div class="user-icon" id="user-icon">👤</div>
   </header>
 
+  <!-- Scrollable Calendar Button (moves with page content) -->
+<button id="calendar-btn" 
+        style="position: absolute;
+               right: 20px;
+               top: 100px;
+               padding: 10px 15px;
+               border-radius: 25px;
+               border: none;
+               background: linear-gradient(135deg, #9f7aea, #805ad5);
+               color: white;
+               font-weight: bold;
+               cursor: pointer;
+               box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+               font-size: 16px;
+               display: flex;
+               align-items: center;
+               gap: 8px;
+               white-space: nowrap;">
+  <span style="font-size: 18px;">📅</span>
+  <span>खेती कैलेंडर</span>
+</button>
+
   <!-- Main App Section -->
   <div class="container">
     <div class="user-question" id="user-question">
@@ -138,18 +160,191 @@
 </div>
 
 
+<!-- 🆕 Mandi Button -->
+<button class="mandi-btn" id="mandi-btn">📊 मंडी का भाव</button>
 
-<!-- Mandi Prices Button -->
-<button id="mandi-btn" class="mandi-btn">📈 मंडी का भाव</button>
-
-<!-- Mandi Modal -->
-<div id="mandi-modal" class="auth-modal hidden">
+<!-- 🆕 Mandi Modal -->
+<div class="auth-modal hidden" id="mandi-modal">
   <div class="auth-box">
-    <span id="mandi-close" class="news-close">×</span>
-    <h3>📊 मंडी का भाव (Mandi Prices)</h3>
-    <div id="mandi-content">⏳ लोड हो रहा है...</div>
+    <span class="close-btn" id="mandi-close">&times;</span>
+    <h3>मंडी भाव (फसल दरें)</h3>
+    <div id="mandi-list"></div>
+    <div style="margin-top: 1rem;">
+      <button id="mandi-prev">⏮️ पिछला</button>
+      <button id="mandi-next">⏭️ अगला</button>
+    </div>
   </div>
 </div>
+
+
+
+<!-- Add this before </body> -->
+<div id="calendar-modal" class="auth-modal hidden">
+  <div class="auth-box" style="max-width: 650px;">
+    <span class="close-btn" id="close-calendar">&times;</span>
+    <h3>📅स्मार्ट खेती कैलेंडर</h3>
+    
+    <div class="calendar-controls">
+      <select id="calendar-state">
+        <option value="">राज्य चुनें</option>
+        <option value="Bihar">बिहार</option>
+        <option value="Uttar Pradesh">उत्तर प्रदेश</option>
+        <option value="Madhya Pradesh">मध्य प्रदेश</option>
+        <option value="Rajasthan">राजस्थान</option>
+        <option value="Odisha">ओडिशा</option>
+      </select>
+      
+      <select id="calendar-month">
+        <option value="">सभी महीने</option>
+        <option value="1">जनवरी</option>
+        <option value="2">फरवरी</option>
+        <option value="3">मार्च</option>
+        <option value="4">अप्रैल</option>
+        <option value="5">मई</option>
+        <option value="6">जून</option>
+        <option value="7">जुलाई</option>
+        <option value="8">अगस्त</option>
+        <option value="9">सितंबर</option>
+        <option value="10">अक्टूबर</option>
+        <option value="11">नवंबर</option>
+        <option value="12">दिसंबर</option>
+      </select>
+      
+      <button id="calendar-search">खोजें</button>
+    </div>
+    
+    <div id="calendar-results">
+      <div class="calendar-card template">
+        <h4 class="calendar-month">जून</h4>
+        <div class="calendar-details">
+          <p><strong>🌾 फसलें:</strong> <span class="calendar-crops">धान, मक्का</span></p>
+          <p><strong>🔧 गतिविधियाँ:</strong> <span class="calendar-activities">नर्सरी तैयार करें</span></p>
+          <p><strong>⚠️ सावधानियाँ:</strong> <span class="calendar-precautions">खरपतवार नियंत्रण</span></p>
+        </div>
+      </div>
+    </div>
+    
+    <button id="speak-calendar" class="speak-btn">🔊 कैलेंडर सुनें</button>
+  </div>
+</div>
+
+
+
+<!-- 🌾 Fertilizer Button (Below Calendar Button) -->
+<button id="fertilizer-btn" 
+        style="position: absolute;
+        ;
+               right: 22px;
+               top: 160px;
+               padding: 12px 15px;
+               border-radius: 25px;
+               border: none;
+               background: linear-gradient(135deg, #09321c, #093f0c);
+               color: white;
+               font-weight: bold;
+               cursor: pointer;
+               box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+               font-size: 16px;
+               display: flex;
+               align-items: center;
+               gap: 10px;">
+  <span style="font-size: 18px;">🧪</span>
+  <span>कैलकुलेटर</span>
+</button>
+
+<!-- 🧪 Fertilizer Calculator Modal -->
+<div id="fertilizer-modal" class="auth-modal hidden">
+  <div class="auth-box">
+    <span class="close-btn" id="fertilizer-close">&times;</span>
+    <h3>🧪कैलकुलेटर</h3>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <input type="text" id="fertilizer-crop" placeholder="🌱 फसल का नाम (जैसे - गेहूं)" required>
+      <input type="number" id="fertilizer-area" placeholder="📏 क्षेत्रफल (संख्या में भरें)" required>
+      <select id="fertilizer-unit">
+        <option value="hectare">हेक्टेयर</option>
+        <option value="acre">एकड़</option>
+      </select>
+      <button id="fertilizer-calculate" style="background: #38a169; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">📊 कैलकुलेट करें</button>
+    </div>
+
+    <div id="fertilizer-result" style="margin-top: 1rem; font-size: 16px;"></div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- 🗄️ Krishi Locker Button -->
+<button id="krishi-locker-btn" 
+        style="position: absolute;
+               right: 22px;
+               top: 220px;
+               padding: 12px 15px;
+               border-radius: 25px;
+               border: none;
+               background: linear-gradient(135deg, #2b6cb0, #2c5282);
+               color: white;
+               font-weight: bold;
+               cursor: pointer;
+               box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+               font-size: 16px;
+               display: flex;
+               align-items: center;
+               gap: 10px;">
+  <span style="font-size: 18px;">🗄️</span>
+  <span>कृषि लॉकर</span>
+</button>
+
+<!-- 🗄️ Krishi Locker Modal -->
+<div id="krishi-locker-modal" class="auth-modal hidden">
+  <div class="auth-box">
+    <span class="close-btn" id="krishi-locker-close">&times;</span>
+    <h3>कृषि लॉकर</h3>
+    <p>कृपया अपनी फ़ाइलें अपलोड करें:</p>
+    <input type="file" id="file-upload" multiple>
+    <button id="upload-btn" style="margin-top: 10px; background: #38a169; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">अपलोड करें</button>
+    <div id="upload-message" style="margin-top: 10px;"></div>
+
+    <h4 style="margin-top: 20px;">अपलोड की गई फ़ाइलें:</h4>
+    <ul id="file-list" style="text-align: left; padding-left: 0;"></ul>
+  </div>
+</div>
+
+
+
+
+<!-- 🔵 Top-Left Circular Buttons -->
+<div class="top-left-icons">
+  <!-- About Us Icon -->
+  <div class="circle-icon" id="aboutBtn" title="About Us">
+    <img src="https://img.icons8.com/ios-filled/50/info.png" alt="About">
+  </div>
+
+  <!-- Contact Icon -->
+  <div class="circle-icon" id="contactBtn" title="Contact Us">
+    <img src="https://img.icons8.com/ios-filled/50/phone.png" alt="Contact">
+  </div>
+</div>
+
+
+
+
+<!-- 🟢 Popup Modal -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-box">
+    <span class="close-popup" id="closePopup">✖</span>
+    <h2 id="popupTitle">Title</h2>
+    <p id="popupContent">Content goes here...</p>
+  </div>
+</div>
+
+
+
+
+
 
 
 

@@ -1,35 +1,31 @@
 import sqlite3
+import random
 
-# Connect to (or create) the database
+# Sample states and crops
+states = ['Bihar', 'Punjab', 'Haryana', 'Madhya Pradesh', 'Uttar Pradesh', 'Maharashtra', 'Rajasthan', 'Gujarat', 'Odisha', 'West Bengal']
+crops = ['गेहूं', 'धान', 'चना', 'मक्का', 'सरसों', 'बाजरा', 'गन्ना', 'आलू', 'प्याज', 'टमाटर', 'कपास', 'सोयाबीन']
+
+# Create DB connection
 conn = sqlite3.connect('mandi_data.db')
 cursor = conn.cursor()
 
-# Create the table
+# Create table
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS mandi_prices (
+CREATE TABLE IF NOT EXISTS mandi_rates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    market TEXT NOT NULL,
     crop TEXT NOT NULL,
-    price INTEGER NOT NULL
+    state TEXT NOT NULL,
+    rate INTEGER NOT NULL
 )
 ''')
 
-# Optional: Clear previous data to avoid duplicates
-cursor.execute('DELETE FROM mandi_prices')
+# Insert 1000 rows of random data
+for _ in range(1000):
+    crop = random.choice(crops)
+    state = random.choice(states)
+    rate = random.randint(800, 5000)  # Random rate between ₹800 to ₹5000
+    cursor.execute('INSERT INTO mandi_rates (crop, state, rate) VALUES (?, ?, ?)', (crop, state, rate))
 
-# Sample Data
-mandi_items = [
-    ("पटना", "धान", 1920),
-    ("लखनऊ", "गेहूं", 2120),
-    ("जयपुर", "चना", 4400),
-    ("भोपाल", "मक्का", 1800)
-]
-
-# Insert sample records
-cursor.executemany("INSERT INTO mandi_prices (market, crop, price) VALUES (?, ?, ?)", mandi_items)
-
-# Commit and close
 conn.commit()
 conn.close()
-
-print("✅ मंडी डेटा सफलतापूर्वक जोड़ा गया।")
+print("✅ Database 'mandi_data.db' created with 1000 records.")

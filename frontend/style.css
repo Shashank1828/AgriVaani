@@ -751,12 +751,12 @@ body {
 
 
 
-/* Mandi Prices Button */
+/* 🆕 Mandi Button */
 .mandi-btn {
   position: absolute;
   top: 220px;
   left: 20px;
-  background: linear-gradient(135deg, #805ad5, #6b46c1);
+  background: linear-gradient(135deg, #38a169, #2f855a);
   color: white;
   padding: 0.7rem 1.2rem;
   border-radius: 30px;
@@ -769,28 +769,472 @@ body {
 }
 
 .mandi-btn:hover {
-  background: #553c9a;
+  background: #2f855a;
   transform: scale(1.05);
 }
 
-/* Mandi Modal */
-#mandi-modal .auth-box {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  max-width: 600px;
-  width: 90%;
+#mandi-list {
   text-align: left;
-  animation: fadeInUp 0.4s ease;
+  max-height: 300px;
   overflow-y: auto;
-  max-height: 80vh;
+  margin-top: 1rem;
+  font-size: 1rem;
+  padding-right: 8px;
 }
 
-#mandi-content {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-top: 1rem;
+#mandi-list div {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 500;
+}
+
+
+
+
+/* 🎯 Button Style */
+#calendar-btn {
+    
+padding: 10px 20px;
+  background: linear-gradient(to right, #4CAF50, #81C784);
+  color: white;
+  border: none;
+  
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  margin: 0px -2px 10px 10px; /* TOP | RIGHT | BOTTOM | LEFT */
+}
+
+#calendar-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to right, #43A047, #66BB6A);
+}
+
+/* 📦 Modal Structure */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background-color: #f9f9f9;
+  margin: 5% auto;
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.4s ease;
+}
+
+/* ❌ Close Button */
+.close-btn {
+  float: right;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #e53935;
+}
+
+/* 📋 Labels and Select */
+.modal-content label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+/* 🔍 Search Button */
+#calendar-search {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #43A047;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#calendar-search:hover {
+  background-color: #2e7d32;
+}
+
+/* 📄 Result Area */
+#calendar-result {
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #e8f5e9;
+  border-left: 5px solid #66bb6a;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #2e7d32;
   max-height: 300px;
   overflow-y: auto;
 }
+
+/* Hidden Class */
+.hidden {
+  display: none;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+
+/* Smart Farming Calendar Styles */
+#calendar-modal .auth-box {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.calendar-controls {
+  display: flex;
+  gap: 10px;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.calendar-controls select {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e0;
+}
+
+#calendar-search {
+  padding: 0.7rem 1.5rem;
+  background: #38a169;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.calendar-card {
+  background: rgba(240, 255, 244, 0.7);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-left: 4px solid #38a169;
+}
+
+.calendar-card h4 {
+  margin-top: 0;
+  color: #2f855a;
+}
+
+.calendar-card p {
+  margin: 0.5rem 0;
+}
+
+.speak-btn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  background: #805ad5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.template {
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+  .auth-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .auth-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+    text-align: center;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #444;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.3s ease;
+  }
+
+  .close-btn:hover {
+    transform: scale(1.2);
+    color: #e53e3e;
+  }
+
+  #file-list li {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  #file-list a {
+    color: #2b6cb0;
+    text-decoration: none;
+  }
+
+  #file-list button {
+    margin-left: 10px;
+    background: none;
+    border: none;
+    color: red;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+
+
+  /* Nav Button Styling */
+.nav-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 16px;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: bold;
+}
+
+.nav-button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+/* Modal Base Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Hide by default */
+.modal.hidden {
+  display: none;
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Close Button */
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #d33;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* 🔵 Container for the top-left buttons */
+.top-left-icons {
+  position: fixed; /* 🔁 Changed from absolute to fixed */
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1001;
+}
+
+/* 🔘 Circular Icon Buttons */
+.circle-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 🟢 About Us Button */
+#aboutBtn {
+  background-color: #1abc9c; /* Teal */
+}
+#aboutBtn:hover {
+  transform: scale(1.1);
+}
+
+/* 🟠 Contact Us Button */
+#contactBtn {
+  background-color: #f39c12; /* Orange */
+}
+#contactBtn:hover {
+  transform: scale(1.1);
+}
+
+.circle-icon img {
+  width: 28px;
+  height: 28px;
+}
+
+/* 🟢 Popup Overlay (Blur background) */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 📦 Popup Content */
+.popup-box {
+  background-color: #ffffff;
+  width: 320px;
+  max-width: 90%;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  text-align: center;
+  animation: popupFade 0.3s ease;
+}
+
+@keyframes popupFade {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.popup-box h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #2c3e50;
+}
+
+.popup-box p {
+  color: #444;
+  font-size: 15px;
+  white-space: pre-line;
+}
+
+/* ❌ Close Button */
+.close-popup {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #e74c3c;
+}
+
+
+
+
+
