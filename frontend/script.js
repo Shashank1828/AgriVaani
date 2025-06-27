@@ -645,6 +645,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+
+
+    // ✅ Emergency Modal Toggle
+document.addEventListener('DOMContentLoaded', function () {
+  const emergencyBtn = document.getElementById('emergencyBtn');
+  const emergencyModal = document.getElementById('emergency-modal');
+  const closeEmergency = document.getElementById('close-emergency');
+
+  // Show modal on click
+  emergencyBtn.addEventListener('click', () => {
+    emergencyModal.style.display = 'flex';
+  });
+
+  // Close modal on close button click
+  closeEmergency.addEventListener('click', () => {
+    emergencyModal.style.display = 'none';
+  });
+
+  // Optional: close modal when clicking outside the box
+  emergencyModal.addEventListener('click', (e) => {
+    if (e.target === emergencyModal) {
+      emergencyModal.style.display = 'none';
+    }
+  });
+});
+
+
+
   // Get elements
   const aboutBtn = document.getElementById("aboutBtn");
   const contactBtn = document.getElementById("contactBtn");
@@ -680,6 +708,3 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 
-
-
-  
