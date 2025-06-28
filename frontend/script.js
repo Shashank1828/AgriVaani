@@ -64,7 +64,8 @@ async function getAIResponse(question) {
   try {
     loader.style.display = 'block';
     resText.textContent = "प्रसंस्करण...";
-    const response = await fetch('http://44.203.141.245/api/message', {
+    const response = await fetch('http://44.203.141.245/api/message',
+         {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: question })
@@ -84,14 +85,25 @@ function speakHindi(text) {
   if ('speechSynthesis' in window) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'hi-IN';
+
     const voices = speechSynthesis.getVoices();
     const hindiVoice = voices.find(v => v.lang === 'hi-IN' || v.name.toLowerCase().includes('hindi'));
-    if (hindiVoice) utterance.voice = hindiVoice;
-    speechSynthesis.cancel();
+
+    if (hindiVoice) {
+      utterance.voice = hindiVoice;
+    } else {
+      console.warn("Hindi voice not found. Using default.");
+    }
+
+    speechSynthesis.cancel(); // cancel any previous speech
     window.speechSynthesis.speak(utterance);
   }
 }
-speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
+
+// force load voices
+speechSynthesis.onvoiceschanged = () => {
+  speechSynthesis.getVoices();
+};
 
 // Auth Logic
 const userIcon = document.getElementById('user-icon');
@@ -110,9 +122,11 @@ const logoutBtn = document.getElementById('logout-btn');
 const userNameDisplay = document.getElementById('user-name-display');
 const userMobileDisplay = document.getElementById('user-mobile-display');
 
+// Toggle Login/Signup Modal or User Info
 userIcon.addEventListener('click', () => {
   const user = JSON.parse(localStorage.getItem('loggedInUser'));
   if (user) {
+  
     userMobileDisplay.textContent = `मोबाइल: ${user.mobile}`;
     userInfoModal.classList.remove('hidden');
   } else {
@@ -225,7 +239,147 @@ loginForm.addEventListener('submit', async (e) => {
   }
 });
 
-// Mandi Modal Logic
+// 🌦️ Weather Feature
+const weatherBtn = document.getElementById('weather-btn');
+const weatherModal = document.getElementById('weather-modal');
+const weatherText = document.getElementById('weather-text');
+const weatherClose = document.getElementById('weather-close');
+
+weatherBtn.addEventListener('click', () => {
+  weatherText.textContent = "स्थान की जानकारी प्राप्त की जा रही है...";
+  weatherModal.classList.remove('hidden');
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      try {
+        const apiKey = "mukUJUKYnnjzcLsHUARDOgZeLMo2hYsf";
+        const url = `https://api.tomorrow.io/v4/weather/forecast?location=${lat},${lon}&apikey=${apiKey}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+        const t = data.timelines?.daily?.[0]?.values;
+
+        if (!t) {
+          weatherText.textContent = "मौसम डेटा उपलब्ध नहीं है।";
+          return;
+        }
+
+        const avgTemp = t.temperatureAvg;
+        const rainChance = t.precipitationProbabilityAvg;
+
+        let cropAdvice = "";
+        if (avgTemp >= 25 && rainChance >= 50) {
+          cropAdvice = "🌾 धान (Rice) के लिए उपयुक्त समय।";
+        } else if (avgTemp >= 18 && rainChance <= 30) {
+          cropAdvice = "🌿 गेहूं या चना के लिए बेहतर मौसम।";
+        } else {
+          cropAdvice = "🧑‍🌾 मौसम अनिश्चित है, देखभाल करें।";
+        }
+
+        weatherText.innerHTML = `
+          📍 स्थिति: ${lat.toFixed(2)}, ${lon.toFixed(2)}<br><br>
+          🌡️ तापमान: <strong>${avgTemp}°C</strong><br>
+          🌧️ बारिश की संभावना: <strong>${rainChance}%</strong><br><br>
+          ✅ सलाह: <strong>${cropAdvice}</strong>
+        `;
+      } catch (error) {
+        weatherText.textContent = "❌ मौसम डेटा प्राप्त नहीं हो सका।";
+      }
+    }, () => {
+      weatherText.textContent = "📍 स्थान अनुमति अस्वीकृत!";
+    });
+  } else {
+    weatherText.textContent = "❌ ब्राउज़र स्थान समर्थन नहीं करता।";
+  }
+});
+
+weatherClose.addEventListener('click', () => {
+  weatherModal.classList.add('hidden');
+});
+document.getElementById("speak-weather").addEventListener("click", () => {
+  const weatherRawText = document.getElementById("weather-text").innerText || document.getElementById("weather-text").textContent;
+  speakHindi(weatherRawText);
+});
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const newsBtn = document.getElementById('news-btn');
+  const newsModal = document.getElementById('news-modal');
+  const newsClose = document.getElementById('news-close');
+  const newsList = document.getElementById('news-list');
+  const nextNews = document.getElementById('next-news');
+  const prevNews = document.getElementById('prev-news');
+
+  const agriNews = [
+    "केंद्र सरकार ने MSP में ₹200 की वृद्धि की घोषणा की।",
+    "खरीफ फसलों की बुआई 10% अधिक हुई इस वर्ष।",
+    "बिहार में पहली बार ड्रोन से कीटनाशक छिड़काव शुरू।",
+    "कर्नाटक में भारी बारिश से प्याज फसल को नुकसान।",
+    "ICAR ने नया हाई-प्रोटीन गेहूं किस्म लॉन्च किया।",
+    "किसानों के लिए 0% ब्याज दर पर क्रेडिट कार्ड योजना।",
+    "गुजरात में ऑर्गेनिक खेती को बढ़ावा मिलेगा सब्सिडी से।",
+    "सभी किसानों को सॉयल हेल्थ कार्ड देने का लक्ष्य रखा।",
+    "भारत से आम का निर्यात UAE को 15% बढ़ा।",
+    "पंजाब में पानी की कमी से धान की खेती में गिरावट।",
+    "बायो-फर्टिलाइज़र पर नई रिसर्च रिपोर्ट जारी की।",
+    "मुफ्त बीज वितरण कार्यक्रम शुरू।",
+    "AI आधारित फसल बीमा प्लेटफॉर्म लॉन्च।",
+    "गेहूं की रिकॉर्ड उत्पादन की उम्मीद।",
+    "फसल कैलेंडर ऐप अब हिंदी में भी उपलब्ध।"
+  ];
+
+  let currentNewsIndex = 0;
+  const pageSize = 3;
+
+  function renderNews() {
+    newsList.innerHTML = '';
+    const visibleNews = agriNews.slice(currentNewsIndex, currentNewsIndex + pageSize);
+
+    visibleNews.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'news-card';
+      div.innerHTML = `<strong>📰 खबर ${currentNewsIndex + index + 1}:</strong> ${item}`;
+      newsList.appendChild(div);
+    });
+
+    prevNews.disabled = currentNewsIndex === 0;
+    nextNews.disabled = currentNewsIndex + pageSize >= agriNews.length;
+  }
+
+  newsBtn.addEventListener('click', () => {
+    currentNewsIndex = 0;
+    renderNews();
+    newsModal.classList.remove('hidden');
+  });
+
+  newsClose.addEventListener('click', () => {
+    newsModal.classList.add('hidden');
+  });
+
+  nextNews.addEventListener('click', () => {
+    if (currentNewsIndex + pageSize < agriNews.length) {
+      currentNewsIndex += pageSize;
+      renderNews();
+    }
+  });
+
+  prevNews.addEventListener('click', () => {
+    if (currentNewsIndex - pageSize >= 0) {
+      currentNewsIndex -= pageSize;
+      renderNews();
+    }
+  });
+});
+
+
+
+// 🆕 Mandi Modal Logic
 const mandiBtn = document.getElementById('mandi-btn');
 const mandiModal = document.getElementById('mandi-modal');
 const mandiClose = document.getElementById('mandi-close');
@@ -276,7 +430,9 @@ mandiPrev.addEventListener('click', () => {
   }
 });
 
-// Calendar Logic
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const calendarBtn = document.getElementById('calendar-btn');
   const calendarModal = document.getElementById('calendar-modal');
@@ -335,20 +491,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function getHindiMonth(num) {
-    const names = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
-    return names[num - 1] || num;
-  }
-
   speakCalendar.addEventListener('click', () => {
     const cards = document.querySelectorAll('.calendar-card');
     let speech = '';
     cards.forEach(card => speech += card.textContent + '। ');
     speakHindi(speech || 'कोई डेटा नहीं मिला');
   });
+
+  function getHindiMonth(num) {
+    const names = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+    return names[num - 1] || num;
+  }
+
+  function speakHindi(text) {
+    if ('speechSynthesis' in window) {
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'hi-IN';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(msg);
+    }
+  }
 });
 
-// Fertilizer Logic
+
+
+// 🌾 Fertilizer Calculator Logic
 document.addEventListener('DOMContentLoaded', function () {
   const fertBtn = document.getElementById('fertilizer-btn');
   const fertModal = document.getElementById('fertilizer-modal');
@@ -356,15 +523,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const fertCalcBtn = document.getElementById('fertilizer-calculate');
   const fertResult = document.getElementById('fertilizer-result');
 
+  // Open modal
   fertBtn.addEventListener('click', () => {
     fertResult.innerHTML = "";
     fertModal.classList.remove('hidden');
   });
 
+  // Close modal
   fertClose.addEventListener('click', () => {
     fertModal.classList.add('hidden');
   });
 
+  // Calculate Fertilizer
   fertCalcBtn.addEventListener('click', async () => {
     const crop = document.getElementById('fertilizer-crop').value.trim().toLowerCase();
     const area = parseFloat(document.getElementById('fertilizer-area').value);
@@ -397,4 +567,145 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-// Remaining modal logic unchanged...
+
+
+
+  const lockerBtn = document.getElementById("krishi-locker-btn");
+  const lockerModal = document.getElementById("krishi-locker-modal");
+  const lockerClose = document.getElementById("krishi-locker-close");
+  const uploadBtn = document.getElementById("upload-btn");
+  const fileInput = document.getElementById("file-upload");
+  const fileList = document.getElementById("file-list");
+  const uploadMsg = document.getElementById("upload-message");
+
+  let uploadedFiles = [];
+
+  // Open modal
+  lockerBtn.addEventListener("click", () => {
+    lockerModal.classList.remove("hidden");
+  });
+
+  // Close modal
+  lockerClose.addEventListener("click", () => {
+    lockerModal.classList.add("hidden");
+  });
+
+  // Upload files to memory
+  uploadBtn.addEventListener("click", () => {
+    const files = Array.from(fileInput.files);
+
+    if (files.length === 0) {
+      uploadMsg.textContent = "कृपया पहले कुछ फ़ाइलें चुनें।";
+      uploadMsg.style.color = "red";
+      return;
+    }
+
+    uploadedFiles.push(...files);
+    displayFiles();
+
+    uploadMsg.textContent = `${files.length} फ़ाइलें सफलतापूर्वक अपलोड हो गईं!`;
+    uploadMsg.style.color = "green";
+
+    fileInput.value = "";
+  });
+
+  function displayFiles() {
+    fileList.innerHTML = "";
+
+    uploadedFiles.forEach((file, index) => {
+      const li = document.createElement("li");
+
+      const link = document.createElement("a");
+      link.textContent = file.name;
+      link.href = URL.createObjectURL(file);
+      link.download = file.name;
+      link.target = "_blank";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "❌";
+      removeBtn.onclick = () => {
+        uploadedFiles.splice(index, 1);
+        displayFiles();
+      };
+
+      li.appendChild(link);
+      li.appendChild(removeBtn);
+      fileList.appendChild(li);
+    });
+  }
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    // ✅ Emergency Modal Toggle
+document.addEventListener('DOMContentLoaded', function () {
+  const emergencyBtn = document.getElementById('emergencyBtn');
+  const emergencyModal = document.getElementById('emergency-modal');
+  const closeEmergency = document.getElementById('close-emergency');
+
+  // Show modal on click
+  emergencyBtn.addEventListener('click', () => {
+    emergencyModal.style.display = 'flex';
+  });
+
+  // Close modal on close button click
+  closeEmergency.addEventListener('click', () => {
+    emergencyModal.style.display = 'none';
+  });
+
+  // Optional: close modal when clicking outside the box
+  emergencyModal.addEventListener('click', (e) => {
+    if (e.target === emergencyModal) {
+      emergencyModal.style.display = 'none';
+    }
+  });
+});
+
+
+
+  // Get elements
+  const aboutBtn = document.getElementById("aboutBtn");
+  const contactBtn = document.getElementById("contactBtn");
+  const popupOverlay = document.getElementById("popupOverlay");
+  const popupTitle = document.getElementById("popupTitle");
+  const popupContent = document.getElementById("popupContent");
+  const closePopup = document.getElementById("closePopup");
+
+  // About Us button click
+  aboutBtn.addEventListener("click", () => {
+    popupTitle.innerText = "हमारे बारे में";
+    popupContent.innerText = "AgriVaani किसानों के लिए एक डिजिटल साथी है जो मौसम, कृषि सलाह और मंडी भाव की जानकारी प्रदान करता है।";
+    popupOverlay.style.display = "block";
+  });
+
+  // Contact Us button click
+  contactBtn.addEventListener("click", () => {
+    popupTitle.innerText = "संपर्क करें";
+    popupContent.innerText = "📧 support@agrivaani.in\n📞 +91-1234567890";
+    popupOverlay.style.display = "block";
+  });
+
+  // Close popup on ✖
+  closePopup.addEventListener("click", () => {
+    popupOverlay.style.display = "none";
+  });
+
+  // Optional: Close popup when clicking outside content
+  window.addEventListener("click", (e) => {
+    if (e.target === popupOverlay) {
+      popupOverlay.style.display = "none";
+    }
+  });
+
+
