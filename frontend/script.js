@@ -64,7 +64,7 @@ async function getAIResponse(question) {
   try {
     loader.style.display = 'block';
     resText.textContent = "प्रसंस्करण...";
-    const response = await fetch('http://127.0.0.1:5000/api/message', {
+    const response = await fetch('http://34.227.143.202/api/message', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: question })
@@ -183,7 +183,7 @@ signupForm.addEventListener('submit', async (e) => {
   };
 
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/register', {
+    const res = await fetch('http://34.227.143.202/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -213,7 +213,7 @@ loginForm.addEventListener('submit', async (e) => {
   };
 
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/login', {
+    const res = await fetch('http://34.227.143.202/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -390,7 +390,7 @@ let mandiPage = 1;
 
 async function loadMandiData(page) {
   try {
-    const res = await fetch(`http://127.0.0.1:5000/api/mandi?page=${page}`);
+    const res = await fetch(`http://34.227.143.202/api/mandi?page=${page}`);
     const result = await res.json();
 
     mandiList.innerHTML = '';
@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
     calendarResults.innerHTML = '<div class="loader"></div>';
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/farming-calendar?state=${state}&month=${month}`);
+      const res = await fetch(`http://34.227.143.202/api/farming-calendar?state=${state}&month=${month}`);
       const data = await res.json();
 
       if (!data.data || data.data.length === 0) {
@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/fertilizer?crop=${crop}&area=${area}&unit=${unit}`);
+      const res = await fetch(`http://34.227.143.202/api/fertilizer?crop=${crop}&area=${area}&unit=${unit}`);
       const data = await res.json();
 
       if (data.error) {
